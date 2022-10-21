@@ -15,14 +15,14 @@ export default function Login() {
   type RootState = ReturnType<typeof store.getState>;
 
   const navigate = useNavigate()
-  const user = useSelector((state: RootState) => state.authReducer.users[0])
+  const users = useSelector((state: RootState) => state.authReducer.users);
 
 
-  const { register, handleSubmit, formState: { errors }, setError } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = data => {
-    (user.username === data.name && user.password === data.password) ? navigate("/") : setError("submit", {
-      message: "Credentials dosent match with any users"
-    })
+    const auth = users.map(u => Object.values(u).includes(data.name && data.password))
+    // console.log(auth)
+    auth.includes(true) ? navigate("/") : setError("submit", { message: "No User Found" })
   }
   return (
     <div className="relative flex justify-center h-full overflow-hidden ">
@@ -67,20 +67,29 @@ export default function Login() {
           <div className="mb-6">
 
             <div className='flex align-center justify-between'>
-              <div className="text-red-500">{errors.submit?.message}</div>
+              <div className="text-red-500"><span>{errors.submit?.message} </span>
+                {
+                  errors.submit &&
+                  <button
+                    onClick={() => { clearErrors() }}
+                    style={{
+                      color: "white",
+                      textDecoration: "underline"
+                    }}>Reset</button>
+                }
+              </div>
               <div className="underline"><Link to="/register">Create user</Link></div>
             </div>
             <button
               type="submit"
               className=" block input w-full mt-6"
-
             >
               Login
             </button>
           </div>
           <div></div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }

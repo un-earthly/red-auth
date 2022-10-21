@@ -1,19 +1,30 @@
-import React from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addUser } from '../redux/authSlice';
+// import store from '../redux/store';
 
 export default function Register() {
     type FormValues = {
         name: string;
         password: string;
         confirmPass: string;
-        email: string;
     };
+    // type RootState = ReturnType<typeof store.getState>;
 
-
+    const dispatch = useDispatch()
+    // const user = useSelector((state: RootState) => state.authReducer.users);
+    // console.log(user)
+    const navigate = useNavigate()
     const { register, handleSubmit, setError, formState: { errors } } = useForm<FormValues>();
     const onSubmit: SubmitHandler<FormValues> = data => {
         const confPassVal = data.password === data.confirmPass
         !confPassVal && setError("confirmPass", { message: "passwords dosent match" })
+
+
+        dispatch(addUser({ username: data.name, password: data.password }))
+        navigate("/login")
+
 
 
     }
@@ -41,24 +52,7 @@ export default function Register() {
                         </label>
                     </div>
                     <div className="mb-2">
-                        <label className='space-y-3'>
-                            <span>Email address</span>
-                            <input
-                                {...register("email", {
-                                    required: "an email must be provided",
-                                    pattern: {
-                                        value: /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-z]+)$/,
-                                        message: 'Email is not valid'
-                                    }
-                                })}
-                                name="email"
-                                type="email"
-                                className=" block input w-full"
-                                placeholder="john.cooks@example.com"
-                            />
-                            <span className='text-red-500 capitalize'>{errors.email && <p>{errors.email.message}</p>}</span>
 
-                        </label>
                     </div>
                     <div className="mb-2">
                         <label className='space-y-3'>
@@ -102,7 +96,6 @@ export default function Register() {
                         <button
                             type="submit"
                             className=" block input w-full mt-6"
-
                         >
                             Register
                         </button>

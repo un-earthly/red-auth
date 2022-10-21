@@ -12,10 +12,13 @@ export const authSlice = createSlice({
     name: "users",
     initialState: initialUsers,
     reducers: {
-        returnUsers: (state) => state
+        returnUsers: (state) => state,
+        addUser: (state, action) => {
+            state.users.push(action.payload)
+        }
     }
 })
 
 
-export const { returnUsers } = authSlice.actions;
-export default authSlice.reducer 
+export const { returnUsers, addUser } = authSlice.actions;
+export default authSlice.reducer
